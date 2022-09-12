@@ -9,7 +9,7 @@
         "dist/"
     ],
     "scripts": {
-        "prepublish": "yarn build",
+        "prepublish": "rm -rf dist && yarn build",
         "build": "tsc && tsc --module commonjs --outDir dist/cjs",
         "test": "jest",
         "lint": "eslint --config ./.eslintrc.js --ext .js,.ts src/"
