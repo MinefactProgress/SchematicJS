@@ -35,8 +35,53 @@ export function loadVersion2(tag: TagMap): Schematic {
                 bracketIndex + 1,
                 key.length - 1
             ) as string;
+            let skip = '';
             propertyArea.split(',').forEach(prop => {
                 const pair = prop.split('=');
+
+                // FLIP START
+                if (pair[0] === skip) {
+                    return;
+                }
+                if (pair[0] === 'facing') {
+                    if (pair[1] === 'north') {
+                        properties[pair[0]] = 'south';
+                        return;
+                    } else if (pair[1] === 'south') {
+                        properties[pair[0]] = 'north';
+                        return;
+                    }
+                } else if (pair[0] === 'north' && pair[1] === 'true') {
+                    if (propertyArea.includes('south=false')) {
+                        properties['north'] = 'false';
+                        properties['south'] = 'true';
+                        skip = 'south';
+                        return;
+                    }
+                } else if (pair[0] === 'north' && pair[1] === 'false') {
+                    if (propertyArea.includes('south=true')) {
+                        properties['north'] = 'true';
+                        properties['south'] = 'false';
+                        skip = 'south';
+                        return;
+                    }
+                } else if (pair[0] === 'south' && pair[1] === 'true') {
+                    if (propertyArea.includes('north=false')) {
+                        properties['north'] = 'true';
+                        properties['south'] = 'false';
+                        skip = 'north';
+                        return;
+                    }
+                } else if (pair[0] === 'south' && pair[1] === 'false') {
+                    if (propertyArea.includes('north=true')) {
+                        properties['north'] = 'false';
+                        properties['south'] = 'true';
+                        skip = 'north';
+                        return;
+                    }
+                }
+                // FLIP END
+
                 properties[pair[0]] = pair[1];
             });
         } else {
